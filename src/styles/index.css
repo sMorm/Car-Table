@@ -1,0 +1,15 @@
+/**
+ * Author   : Serey Morm
+ * Contact  : serey_morm@student.uml.edu
+ * Hosted   : weblab.cs.uml.edu/~smorm/461f2017/hw4
+ */
+
+ /* Import Karla font from Google and remove margins and padding */
+@import url('https://fonts.googleapis.com/css?family=Karla:regular,bold,italic&subset=latin,latin-ext');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Karla', Helvetica, sans-serif;
+  background-color: rgb(224, 214, 199);
+}
