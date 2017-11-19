@@ -1,7 +1,7 @@
 /**
  * Author   : Serey Morm
  * Contact  : serey_morm@student.uml.edu
- * Hosted   : weblab.cs.uml.edu/~smorm/461f2017/hw4
+ * Hosted   : weblab.cs.uml.edu/~smorm/461f2017/hw5
  * The following component will render a form that allows
  * the user the input information for the price and 
  * fuel consumption of the car. Upon submission, the
@@ -10,6 +10,7 @@
  */
 
 import React, { Component } from 'react'
+import Scroll from 'react-scroll'
 
 export default class Form extends Component {
   state = {
@@ -24,6 +25,16 @@ export default class Form extends Component {
    * Handles form submissions and form data validation.
    * It will also format prices to add commas using the
    * international number format.
+   * Upon submission, we check to see if the inputs are
+   * empty, if they are, we set our errors object with
+   * the following keys for each input box. Then we
+   * display and skip the process of appending the table.
+   * 
+   * For better user experience, upon appending to the 
+   * table, it will scroll to the newly added item. If
+   * there is an error, an animation will scroll back
+   * up to the input boxes, then animate and change
+   * the error text to red.
    */
   onSubmit = event => {
     event.preventDefault()
@@ -31,20 +42,31 @@ export default class Form extends Component {
     const fuelConsumption = Number(this.state.fuelConsumption)
     let errors = {}
     if(this.state.price === '')
-      errors.price = 'Price is required'
+      errors.price = 'Car Price required'
     if(this.state.fuelConsumption === '')
-      errors.fuelConsumption = 'Fuel Consumption is required'
+      errors.fuelConsumption = 'Fuel Consumption required'
     if(errors.price || errors.fuelConsumption){
-      console.log('err')
-      this.setState({ errors })
+      Scroll.animateScroll.scrollToTop()
+      setTimeout(() => this.setState({ errors }), 250)      
+      return
+    }
+    if(this.state.price < 0)
+      errors.price = 'Car price should be positive'
+    if(this.state.fuelConsumption < 0)
+      errors.fuelConsumption = 'Fuel Consump should be positive'
+    if(errors.price || errors.fuelConsumption){
+      Scroll.animateScroll.scrollToTop()
+      setTimeout(() => this.setState({ errors }), 250)      
       return
     }
     this.setState({ 
       price: '',
       fuelConsumption: '',
-      addMore: true
+      addMore: true,
+      errors: {}
     })
     this.props.appendCarData({ fuelConsumption, price })
+    Scroll.animateScroll.scrollToBottom()
   }
 
   /**
@@ -57,6 +79,7 @@ export default class Form extends Component {
     const price = new Intl.NumberFormat().format(Math.floor(Math.random() * (100000 - 2000) + 2000))
     this.props.appendCarData({ fuelConsumption, price })
     this.setState({ errors: {} })
+    Scroll.animateScroll.scrollToBottom()
   }
   render() {
     return (

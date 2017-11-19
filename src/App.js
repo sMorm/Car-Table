@@ -1,7 +1,7 @@
 /**
  * Author   : Serey Morm
  * Contact  : serey_morm@student.uml.edu
- * Hosted   : weblab.cs.uml.edu/~smorm/461f2017/hw4
+ * Hosted   : weblab.cs.uml.edu/~smorm/461f2017/hw5
  * This component is responsible for rendering the 
  * application header, and button to start the app.
  * Upon clicking the get started button, it will 
