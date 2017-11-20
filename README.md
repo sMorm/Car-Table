@@ -1,7 +1,7 @@
 # Car Table
 
 A simple web application that helps compare prices and milage for numerous vehicles.
-Demo: http://www.cs.uml.edu/~smorm/461f2017/hw4/
+Demo: http://www.cs.uml.edu/~smorm/461f2017/hw5/
 
 I decided to use the React library because of how it efficient it is to update an array of objects. In this
 case, updating the table array is more efficient using the virtual DOM. Instead of using the jQuery validation
