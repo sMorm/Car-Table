@@ -11,13 +11,29 @@
 
 import React, { Component } from 'react';
 import Form from './Form'
-import './styles/App.css';
+import CountUp from 'react-countup'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+
+import './styles/App.css'
+import './styles/Tabs.css'
+import 'react-tabs/style/react-tabs.css'
 
 class App extends Component {
   state = {
     showForm: false,
     buttonStyle: 'button enter',
+    tabStyle: 'tabPanel',
     carData: [],
+    selectedIndex: 0
+  }
+
+  componentWillMount() {
+    if(localStorage['carData']) {
+      const carData = JSON.parse(localStorage['carData'])
+      console.log(carData)
+      this.setState({ carData, showForm: true })
+    }
+
   }
 
   /**
@@ -33,7 +49,26 @@ class App extends Component {
    * Uses the spread operator to append the new data to the table
    */
   appendCarData = data => {
-    this.setState({ carData: [...this.state.carData, data] })
+    this.setState({ 
+      carData: [...this.state.carData, data],
+      selectedIndex: this.state.carData.length,
+    })
+    localStorage['carData'] = JSON.stringify([...this.state.carData, data])
+  }
+
+  removeItem = index => {
+    const { carData } = this.state
+    carData.splice(index, 1)
+    this.setState({ carData, selectedIndex: index - 1 })
+    localStorage['carData'] = JSON.stringify([...this.state.carData])
+  }
+
+  onSelect = selectedIndex =>  {
+    this.setState({ tabStyle: 'tabPanel leave' })
+    setTimeout(() => this.setState({ 
+      selectedIndex, 
+      tabStyle: 'tabPanel' 
+    }), 250)
   }
 
   render() {
@@ -50,26 +85,50 @@ class App extends Component {
           }
           <br/><br/>
           {this.state.carData.length > 0 &&
-          <table className='TableContainer'>
-            <tbody>
-              <tr>
-                <th>Summary</th>
-                <th>Car Price</th>
-                <th>Fuel Consumption</th>
-              </tr>
-              {
-                this.state.carData.map((car, key) => {
-                  return(
-                    <tr key={key}>
-                      <td>Vehicle {key + 1}</td>
-                      <td>${car.price}</td>
-                      <td>{car.fuelConsumption}mpg</td>
-                    </tr>
-                  )
-                })
-              }
-            </tbody>
-          </table>
+            <Tabs 
+              selectedIndex={this.state.selectedIndex} 
+              onSelect={selectedIndex => this.onSelect(selectedIndex) }
+              selectedTabClassName='selectedTab'>
+              <TabList>
+                {this.state.carData.map((car, key) => {
+                  return <Tab key={key}>{car.name}</Tab>
+                })}
+              </TabList>
+              {this.state.carData.map((car, key) => {
+                return <TabPanel key={key}>
+                <h3>Here's a summary for your {car.name}</h3>
+                <span className={this.state.tabStyle}>
+                  <div className='priceBubble orange'>
+                    <h2>{car.name}</h2>
+                  </div>
+                  <div className='priceBubble'>
+                    <h2>
+                      <CountUp 
+                        start={Number(car.price.replace(/,/g, '')) / 2} 
+                        end={Number(car.price.replace(/,/g, ''))}
+                        duration={0.75} 
+                        prefix='$' 
+                        redraw/>
+                    </h2>
+                    <p>Car Price</p>
+                  </div>
+                  <div className='priceBubble orange'>
+                    <h2>
+                      <CountUp 
+                        start={0} 
+                        end={Number(car.fuelConsumption)}
+                        duration={1} 
+                        redraw/>
+                    </h2>
+                    <p>Miles Per Gallon</p>
+                  </div>
+                </span>
+                <span onClick={() => this.removeItem(key)} className='removeButton'>
+                  &times; Remove
+                </span>
+                </TabPanel>
+              })}
+            </Tabs>
           }
         </div>
       </div>

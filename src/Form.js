@@ -11,10 +11,17 @@
 
 import React, { Component } from 'react'
 import Scroll from 'react-scroll'
+import InputRange from 'react-input-range'
+
+import 'react-input-range/lib/css/index.css'
+import './styles/Slider.css'
+
+const carMakes = [ 'Toyota', 'Tesla', 'Honda', 'Audi']
 
 export default class Form extends Component {
   state = {
     fuelConsumption: '',
+    name: '',
     price: '',
     addMore: false,
     errors: {}
@@ -45,7 +52,9 @@ export default class Form extends Component {
       errors.price = 'Car Price required'
     if(this.state.fuelConsumption === '')
       errors.fuelConsumption = 'Fuel Consumption required'
-    if(errors.price || errors.fuelConsumption){
+    if(this.state.name === '')
+      errors.name = 'Car name required'
+    if(errors.price || errors.fuelConsumption || errors.name ){
       Scroll.animateScroll.scrollToTop()
       setTimeout(() => this.setState({ errors }), 250)      
       return
@@ -62,10 +71,11 @@ export default class Form extends Component {
     this.setState({ 
       price: '',
       fuelConsumption: '',
+      name: '',
       addMore: true,
       errors: {}
     })
-    this.props.appendCarData({ fuelConsumption, price })
+    this.props.appendCarData({ fuelConsumption, price, name: this.state.name })
     Scroll.animateScroll.scrollToBottom()
   }
 
@@ -77,34 +87,66 @@ export default class Form extends Component {
   addDummyData = () => {
     const fuelConsumption = new Intl.NumberFormat().format(Math.floor(Math.random() * (60 - 20) + 20))
     const price = new Intl.NumberFormat().format(Math.floor(Math.random() * (100000 - 2000) + 2000))
-    this.props.appendCarData({ fuelConsumption, price })
+    const name = carMakes[Math.floor(Math.random() * carMakes.length )]
+    this.props.appendCarData({ fuelConsumption, price, name })
     this.setState({ errors: {} })
     Scroll.animateScroll.scrollToBottom()
   }
+
   render() {
     return (
       <span className='FormContainer'>
-        <form onSubmit={this.onSubmit} className='FormFlex'>
-          <span>
-              {this.state.errors.price
-                ? <label className='LabelError'>{this.state.errors.price}</label>
-                : <label>Car Price</label>
-              }
-            <input
-              type='number'
-              name='price'
-              value={this.state.price}
-              onChange={this.onChange}/>
+        <form onSubmit={this.onSubmit} className='FormContent'>
+          <span className='FormFlex'>
+            <span className='FormFlex-item'>
+                {this.state.errors.price
+                  ? <label className='LabelError'>{this.state.errors.price}</label>
+                  : <label>Car Price</label>
+                }
+              <input
+                type='number'
+                name='price'
+                value={this.state.price}
+                onChange={this.onChange}/>
+                <br/><br/>
+              <InputRange
+                value={this.state.price === '' ? 501 : Number(this.state.price)}
+                onChange={price => this.setState({ price })}
+                formatLabel={price => `$${new Intl.NumberFormat().format(price)}`}
+                step={500}
+                minValue={500}
+                maxValue={100000}/>
+            </span>
+            <span className='FormFlex-item'>
+              {this.state.errors.fuelConsumption
+                ? <label className='LabelError'>{this.state.errors.fuelConsumption}</label>
+                : <label>Fuel Consumption</label>
+              }       
+              <input
+                type='number'
+                name='fuelConsumption'
+                value={this.state.fuelConsumption}
+                onChange={this.onChange}/>
+              <br/><br/>
+              <InputRange
+                value={this.state.fuelConsumption === '' ? 1 : Number(this.state.fuelConsumption)}
+                onChange={fuelConsumption => this.setState({ fuelConsumption })}
+                formatLabel={fuelConsumption => `${fuelConsumption} MPG`}
+                step={1}
+                minValue={1}
+                maxValue={50}/>
+            </span>
           </span>
+          <br/><br/>
           <span>
-            {this.state.errors.fuelConsumption
-              ? <label className='LabelError'>{this.state.errors.fuelConsumption}</label>
-              : <label>Fuel Consumption</label>
-            }       
+            {this.state.errors.name
+              ? <label className='LabelError'>{this.state.errors.name}</label>
+              : <label>Car Name</label>
+            }
             <input
-              type='number'
-              name='fuelConsumption'
-              value={this.state.fuelConsumption}
+              type='text'
+              name='name'
+              value={this.state.name}
               onChange={this.onChange}/>
           </span>
         </form>

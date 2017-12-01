@@ -1,0 +1,21 @@
+.input-range__label-container {
+  color: white;
+  font-family: 'Karla', sans-serif;
+}
+
+.input-range__slider {
+  background: #EE6564;
+  border-color: #EE6564;
+}
+
+.input-range__track {
+  background: rgb(245, 245, 245);
+}
+
+.input-range__track--active {
+  background: rgb(244, 174, 174);
+}
+
+.input-range__label--value {
+  display: none;
+}

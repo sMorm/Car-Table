@@ -71,7 +71,7 @@ width padding */
 .FormContainer {
   display: inline-block;
   animation: fade-in-reverse 0.5s forwards;
-  width: 100%;  
+  width: 100%;
 }
 
 .FormFlex {
@@ -80,16 +80,21 @@ width padding */
   flex-wrap: wrap;
   width: 100%;
   max-width: 600px;
+  margin-top: -20px;
 }
 
-.FormFlex label{
+.FormFlex-item { 
+  margin-top: 20px;
+}
+
+.FormContent label{
   display: block;
   color: white;
   padding: 5px 0px;
   font-weight: 700;
 }
 
-.FormFlex input {
+.FormContent input {
   background-color: transparent;
   border: solid 1px white;
   font-size: 20px;
