@@ -27,13 +27,14 @@ class App extends Component {
     selectedIndex: 0
   }
 
+  // Before mounting, check if there was anything cached
   componentWillMount() {
-    if(localStorage['carData']) {
+    const cache = localStorage['carData']
+    if(cache && cache !== '[]') {
       const carData = JSON.parse(localStorage['carData'])
       console.log(carData)
       this.setState({ carData, showForm: true })
     }
-
   }
 
   /**
@@ -56,6 +57,7 @@ class App extends Component {
     localStorage['carData'] = JSON.stringify([...this.state.carData, data])
   }
 
+  // Remove a single entry
   removeItem = index => {
     const { carData } = this.state
     carData.splice(index, 1)
@@ -63,6 +65,13 @@ class App extends Component {
     localStorage['carData'] = JSON.stringify([...this.state.carData])
   }
 
+  // Remove all entries
+  removeAll = () => { 
+    this.setState({ carData: [] }) 
+    localStorage['carData'] = '[]'
+  }
+
+  // For styling and animation when changing tabs
   onSelect = selectedIndex =>  {
     this.setState({ tabStyle: 'tabPanel leave' })
     setTimeout(() => this.setState({ 
@@ -84,6 +93,7 @@ class App extends Component {
             : <Form appendCarData={this.appendCarData}/>
           }
           <br/><br/>
+
           {this.state.carData.length > 0 &&
             <Tabs 
               selectedIndex={this.state.selectedIndex} 
@@ -125,7 +135,12 @@ class App extends Component {
                 </span>
                 <span onClick={() => this.removeItem(key)} className='removeButton'>
                   &times; Remove
-                </span>
+                </span>&emsp;
+                {this.state.carData.length > 1 && 
+                  <span onClick={this.removeAll} className='removeButton'>
+                    &times; Remove All
+                  </span>
+                }
                 </TabPanel>
               })}
             </Tabs>
